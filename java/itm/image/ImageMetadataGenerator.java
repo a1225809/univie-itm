@@ -7,10 +7,15 @@ package itm.image;
 
 import itm.model.ImageMedia;
 import itm.model.MediaFactory;
+import itm.util.IOUtil;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 
 /**
     This class reads images of various formats and stores some basic image meta data to text files.
@@ -102,27 +107,47 @@ public class ImageMetadataGenerator {
 		// get metadata and store it to media object
 		ImageMedia media = (ImageMedia) MediaFactory.createMedia(input);
 
-		// ***************************************************************
-		//  Fill in your code here!
-		// ***************************************************************
-
 		// load the input image
+		BufferedImage image = ImageIO.read(input);
 
-		// set width and height of the image  
+		// set width and height of the image
+		media.setWidth(image.getWidth());
+		media.setHeight(image.getHeight());
 
 		// add a tag "image" to the media
+		media.addTag("image");
 
-		// add a tag corresponding to the filename extension of the file to the media 
+		// add a tag corresponding to the filename extension of the file to the media
+		String filename = input.getName();
+		String ext = filename.substring(filename.lastIndexOf(".")+1).toLowerCase();
+		media.addTag(ext);
 
 		// set orientation
+		if (image.getWidth() < image.getHeight()) {
+			media.setOrientation(ImageMedia.ORIENTATION_PORTRAIT);
+		} else {
+			media.setOrientation(ImageMedia.ORIENTATION_LANDSCAPE);
+		}
 
 		// if there is a colormodel:
-		// set color space type
-		// set pixel size
-		// set transparency
-		// set number of (color) components        
+		if (image.getColorModel() != null) {
+			ColorModel cm = image.getColorModel();
+			
+			// set color space type
+			media.setColorSpaceType(cm.getColorSpace().getType());
+			
+			// set pixel size
+			media.setPixelSize(cm.getPixelSize());
+			
+			// set transparency
+			media.setTransparency(cm.getTransparency());
+			
+			// set number of (color) components
+			media.setNumComponents(cm.getNumComponents());
+			media.setNumColorComponents(cm.getNumColorComponents());
+		}
 
-		// store meta data
+		IOUtil.writeFile(media.serializeObject(), outputFile);
 
 		return media;
 	}
