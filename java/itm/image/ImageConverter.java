@@ -5,9 +5,15 @@ package itm.image;
  * (c) University of Vienna 2009-2014
  *******************************************************************************/
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
 
 /**
  * This class converts images into various image formats (BMP, PNG, ...).
@@ -108,20 +114,71 @@ public class ImageConverter {
 		if (!targetFormat.equalsIgnoreCase(BMP) && !targetFormat.equalsIgnoreCase(PNG) && !targetFormat.equalsIgnoreCase(JPEG)) {
 			throw new IllegalArgumentException("Unknown target format: " + targetFormat);
 		}
-
-		File outputFile = null;
-
-		// ***************************************************************
-		//  Fill in your code here!
-		// ***************************************************************
-
-		// load the input image
-
-		// encode and save the image 
+		
+		BufferedImage image = loadImage(input);
+		File outputFile = createOutputFile(input, output, targetFormat, quality);
+		
+		switch (targetFormat.toLowerCase()) {
+		case BMP:
+			saveBMP(image, outputFile);
+			break;
+		case PNG:
+			savePNG(image, outputFile);
+			break;
+		case JPEG:
+			saveJPEG(image, quality, outputFile);
+		}
 
 		return outputFile;
 	}
-
+	
+	private BufferedImage loadImage(File input) throws IOException {
+		try {
+			return ImageIO.read(input);
+		} catch (IOException e) {
+			throw new IOException("Could not read image file", e);
+		}
+	}
+	
+	private File createOutputFile(File input, File output, String targetFormat, float quality) {
+		String inputFilename = input.getName();
+		String outputFilename = null;
+		
+		switch (targetFormat.toLowerCase()) {
+		case BMP:
+			outputFilename = inputFilename + "." + BMP;
+			break;
+		case PNG:
+			outputFilename = inputFilename + "." + PNG;
+			break;
+		case JPEG:
+			outputFilename = inputFilename + "-" + quality + "." + JPEG;
+			break;
+		default:
+			throw new IllegalArgumentException("Unknown target format: " + targetFormat);
+		}
+		
+		return new File(output, outputFilename);
+	}
+	
+	private void saveBMP(BufferedImage image, File outputFile) throws IOException {
+		ImageIO.write(image, BMP, outputFile);
+	}
+	
+	private void savePNG(BufferedImage image, File outputFile) throws IOException {
+		ImageIO.write(image, PNG, outputFile);
+	}
+	
+	private void saveJPEG(BufferedImage image, float quality, File outputFile) throws IOException {
+		ImageWriter iw = ImageIO.getImageWritersByFormatName(JPEG).next();
+		iw.setOutput(ImageIO.createImageOutputStream(outputFile));
+		
+		ImageWriteParam iwp = iw.getDefaultWriteParam();
+		iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+		iwp.setCompressionQuality(quality);
+		
+		iw.write(null, new IIOImage(image, null, null), iwp);
+	}
 
 	/**
      * Main method. Parses the commandline parameters and prints usage information if required.
