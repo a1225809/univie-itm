@@ -101,25 +101,27 @@ public class ImageThumbnailGenerator {
 		// load the input image
 		BufferedImage image = ImageUtil.load(input);
 		
+		// convert to RGB
+		BufferedImage thumb = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+		thumb.getGraphics().drawImage(image, 0, 0, null);
+		
 		// rotate the image if required - do not crop image parts!
-		if (image.getHeight() > image.getWidth()) {
-			image = ImageUtil.rotateLeft(image);
+		if (thumb.getHeight() > thumb.getWidth()) {
+			thumb = ImageUtil.rotateLeft(thumb);
 		}
 
 		// scale the image to a maximum of [ dimx X dimy ] pixels - do not distort!
-		//if (image.getWidth() > dimx || image.getHeight() > dimy) {
-		//	image = ImageUtil.shrink(image, dimx, dimy);
-		if (image.getWidth() > dimx) {
-			image = ImageUtil.resizeToWidth(image, dimx);
+		if (thumb.getWidth() > dimx) {
+			thumb = ImageUtil.resizeToWidth(thumb, dimx);
 		}
 			
 		// if the image is smaller than [ dimx X dimy ] - print it on a [ dim X dim ] canvas!
-		if ((image.getWidth() < dimx || image.getHeight() < dimy)) {
-			image = ImageUtil.putOnCanvas(image, dimx, dimy);
+		if (thumb.getWidth() < dimx || thumb.getHeight() < dimy) {
+			thumb = ImageUtil.putOnCanvas(thumb, dimx, dimy);
 		}
 
 		// encode and save the image
-		ImageUtil.savePNG(image, outputFile);
+		ImageUtil.savePNG(thumb, outputFile);
 
 		return outputFile;
 	}
