@@ -3,7 +3,7 @@ package itm.model;
 /*******************************************************************************
     This file is part of the ITM course 2014
     (c) University of Vienna 2009-2014
-*******************************************************************************/
+ *******************************************************************************/
 
 import itm.image.ImageMetadataGenerator;
 import itm.image.ImageThumbnailGenerator;
@@ -54,8 +54,7 @@ public class MediaFactory {
 	/**
 	 * Initializes this media factory.
 	 */
-	public static void init(File imageDir, File audioDir, File videoDir,
-			File metadataDir) {
+	public static void init(File imageDir, File audioDir, File videoDir, File metadataDir) {
 		MediaFactory.imageDir = imageDir;
 		MediaFactory.audioDir = audioDir;
 		MediaFactory.videoDir = videoDir;
@@ -68,11 +67,14 @@ public class MediaFactory {
 	 * first time, it is cached in memory for successive requests.
 	 */
 	public static ArrayList<AbstractMedia> getMedia() throws IOException {
-		if (!initialized)
-			throw new IOException(
-					"error: mediafactory was not initialized yet!");
-		if (media == null) // load media for the first time only
+		if (!initialized) {
+			throw new IOException("error: mediafactory was not initialized yet!");
+		}
+		
+		if (media == null) { // load media for the first time only
 			media = loadMedia();
+		}
+		
 		return media;
 	}
 
@@ -146,9 +148,9 @@ public class MediaFactory {
 			throw new IOException("Input file " + f + " was not found!");
 
 		String name = f.getName();
-		if (name.indexOf(".") < 0)
-			throw new IOException(
-					"Could not determine what object to create from filename!");
+		if (name.indexOf(".") < 0) {
+			throw new IOException("Could not determine what object to create from filename!");
+		}
 
 		String ext = name.substring(name.lastIndexOf(".") + 1).toLowerCase();
 
@@ -159,24 +161,22 @@ public class MediaFactory {
 				am.readFromFile(f);
 				return am;
 			} else if (name.startsWith("aud_")) {
-                // do something
-                throw new RuntimeException( "loading audio metadata files not yet implemented! see MediaFactory.java!" );
+				// do something
+				throw new RuntimeException( "loading audio metadata files not yet implemented! see MediaFactory.java!" );
 			} else if (name.startsWith("vid_")) {
-                // do something
-                throw new RuntimeException( "loading video metadata files not yet implemented! see MediaFactory.java!" );
-			} else
-				throw new IOException(
-						"Could not determine media type of metadata file "
-								+ name);
+				// do something
+				throw new RuntimeException( "loading video metadata files not yet implemented! see MediaFactory.java!" );
+			} else {
+				throw new IOException("Could not determine media type of metadata file " + name);
+			}
 		}
+		
 		// If passed file is a jpg/gif/png: create a new image object
-		if ((ext.equals("jpg") || ext.equals("gif") || ext.equals("png") || ext
-				.equals("bmp")))
+		if ((ext.equals("jpg") || ext.equals("gif") || ext.equals("png") || ext.equals("bmp"))) {
 			return new ImageMedia(f);
+		}
 
-		throw new IOException(
-				"Could not determine what object to create from filename extension "
-						+ ext);
+		throw new IOException("Could not determine what object to create from filename extension " + ext);
 	}
 
 }
