@@ -5,15 +5,12 @@ package itm.image;
     (c) University of Vienna 2009-2014
  *******************************************************************************/
 
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
+import itm.util.ImageUtil;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
-
 
 /**
     This class converts images of various formats to PNG thumbnails files.
@@ -102,24 +99,24 @@ public class ImageThumbnailGenerator {
 		}
 
 		// load the input image
-		BufferedImage image = ImageIO.read(input);
+		BufferedImage image = ImageUtil.load(input);
 		
 		// rotate the image if required - do not crop image parts!
 		if (image.getHeight() > image.getWidth()) {
-			image = rotateLeft(image);
+			image = ImageUtil.rotateLeft(image);
 		}
 
 		// scale the image to a maximum of [ dimx X dimy ] pixels - do not distort!
 		if (image.getWidth() > dimx || image.getHeight() > dimy) {
-			image = shrink(image, dimx, dimy);
+			image = ImageUtil.shrink(image, dimx, dimy);
 		
 		// if the image is smaller than [ dimx X dimy ] - print it on a [ dim X dim ] canvas!
 		} else if ((image.getWidth() < dimx && image.getHeight() < dimy)) {
-			image = putOnCanvas(image, dimx, dimy);
+			image = ImageUtil.putOnCanvas(image, dimx, dimy);
 		}
 
 		// encode and save the image
-		ImageIO.write(image, "png", outputFile);
+		ImageUtil.savePNG(image, outputFile);
 
 		return outputFile;
 	}
@@ -138,59 +135,5 @@ public class ImageThumbnailGenerator {
 
 		ImageThumbnailGenerator itg = new ImageThumbnailGenerator();
 		itg.batchProcessImages(fi, fo, 200, 100, true);
-	}
-	
-	private BufferedImage rotateLeft(BufferedImage image) {
-		BufferedImage canvas = new BufferedImage(image.getHeight(), image.getWidth(), image.getType());
-		AffineTransform tx = new AffineTransform();
-		
-		//Schritt 2: verschiebe um die neue Breite nach links
-		tx.translate(image.getHeight(), 0);
-		//Schritt 1: rotiere um Ursprung
-		tx.rotate(Math.PI/2);
-
-		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-		
-		return op.filter(image, canvas);
-	}
-	
-	private BufferedImage shrink(BufferedImage image, int maxWidth, int maxHeight) {
-		int imageWidth = image.getWidth();
-		int imageHeight = image.getHeight();
-		
-		double targetRatio = 1.0 * maxWidth / maxHeight;
-		double imageRatio = 1.0 * imageWidth / imageHeight;
-		
-		double scalefactor = 1.0;
-		BufferedImage canvas = null;
-		
-		if (imageRatio < targetRatio) {
-			//shrink height to maxHeight
-			scalefactor = 1.0 * maxHeight / imageHeight;
-			canvas = new BufferedImage((int) (maxHeight * imageRatio), maxHeight, image.getType());
-		} else {
-			//shrink width to maxWidth
-			scalefactor = 1.0 * maxWidth / imageWidth;
-			canvas = new BufferedImage(maxWidth, (int) (maxWidth / imageRatio), image.getType());
-		}
-		
-		AffineTransform tx = new AffineTransform();
-		
-		//Scale
-		tx.scale(scalefactor, scalefactor);
-		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-		
-		return op.filter(image, canvas);
-	}
-	
-	private BufferedImage putOnCanvas(BufferedImage image, int width, int height) {
-		BufferedImage canvas = new BufferedImage(width, height, image.getType());
-		AffineTransform tx = new AffineTransform();
-		
-		//Zentriere am Canvas
-		tx.translate(width/2-image.getWidth()/2, height/2-image.getHeight()/2);
-		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-		
-		return op.filter(image, canvas);
 	}
 }
