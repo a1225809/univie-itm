@@ -107,11 +107,14 @@ public class ImageThumbnailGenerator {
 		}
 
 		// scale the image to a maximum of [ dimx X dimy ] pixels - do not distort!
-		if (image.getWidth() > dimx || image.getHeight() > dimy) {
-			image = ImageUtil.shrink(image, dimx, dimy);
-		
+		//if (image.getWidth() > dimx || image.getHeight() > dimy) {
+		//	image = ImageUtil.shrink(image, dimx, dimy);
+		if (image.getWidth() > dimx) {
+			image = ImageUtil.resizeToWidth(image, dimx);
+		}
+			
 		// if the image is smaller than [ dimx X dimy ] - print it on a [ dim X dim ] canvas!
-		} else if ((image.getWidth() < dimx && image.getHeight() < dimy)) {
+		if ((image.getWidth() < dimx || image.getHeight() < dimy)) {
 			image = ImageUtil.putOnCanvas(image, dimx, dimy);
 		}
 
