@@ -10,18 +10,30 @@ Task 1.1: comparison of image formats
 
 * Compare your converted files wrt. file size and quality ("GOOD", "MEDIUM", "BAD") in a table (e.g., an excel spreadsheet)
 
+Filename			Original Size	Size BMP	Size PNG	Size JPEG 0	Size JPEG 0.5	Size JPEG 1b20nature_plants245.jpg		1,6 MB		14,7 MB		7,7 MB		84 KB		164 KB		2,3 MBelephant14m.png			118 KB		215 KB		164 KB		9 KB		59 KB		344 KBthe_real_firefox_dithered.bmp	89 KB		89 KB		58 KB		4 KB		27 KB		212 KBunderwater_rugby.JPG		114 KB		2,4 MB		1,9 MB		15 KB		78 KB		370 KB						Filename			Orig Quality	Quality BMP	Quality PNG	Quality JPEG 0	Qual JPEG 0.5	Quality JPEG 1b20nature_plants245.jpg		good		good		good		bad		medium		goodelephant14m.png			medium		medium		medium		bad		medium		mediumthe_real_firefox_dithered.bmp	medium		medium		medium		bad		medium		mediumunderwater_rugby.JPG		good		good		good		bad		medium		good
+
 * Did the file sizes increase or decrease when you used different formats? Why? What is the difference between lossy and lossless image formats?
+
+When converting to a lossless format (BMP and PNG) or a high-quality JPEG, the file size increased (except BMP to BMP), because the files had to be recalculated into a less efficient format. Converting to lower-quality JPEG reduced the file size, because information got lost.
+BMP is lossless (and uncompressed) because it saves every pixel on its own. PNG is also lossless, but it is compressed, using some form of entropy encoding. JPEG is lossy - image data gets lost and cannot be recovered, but that allows the highest compression.
 
 * How many bytes are required in theory (i.e. ignoring any file format overhead and image compression) to store a 200x200px monochrome thumbnail (i.e. a binary image)?
 
+2 color values -> 1 bit per pixel
+200x200x1 = 40.000 bits = 5.000 B = 5 KB
+
 * How many bytes are required (in theory again) if you want to store the same image with 16 possible colors?
 
+16 color values -> 4 bits per pixel
+200x200x4 = 160.000 bits = 20.000 B = 20 KB
 
 ------------------------------------------------------------------------------
 Task 1.2: extract/get image meta data
 ------------------------------------------------------------------------------
 
-* Critically discuss the used format for storing the image meta data. Why do you think the used format is good/bad? 
+* Critically discuss the used format for storing the image meta data. Why do you think the used format is good/bad?
+
+It is not very good. The meta data is in its own file, so both files have to be copied if one wants to move the picture. The file path is encoded in a platform-dependent format, so it cannot be directly used between different operating systems. Also, much of the meta data can be read directly from the image file itself, so it is mostly redundant, which makes it error-prone.
 
 ----------------------------------------------------------
 Task 1.3: load images and convert them to thumbnails
@@ -29,10 +41,21 @@ Task 1.3: load images and convert them to thumbnails
 
 * What is an affine transformation? 
 
+A mathematical function that maps points on a plane/space to a different space. Transformation matrices can be used as an efficient notation.
+
 * What affine transformations are supported by Java2D?
+
+Transformation, rotation, scaling, shearing, inverting
 
 * What 2D transformation matrix is required to rotate a point by 90 degrees counterclockwise (around the origin)? Explain.
 
+General rotation matrix by angle a:
+[cos a  -sin a]
+[sin a   cos a]
+
+with a = 90 degrees = pi/2 radians:
+[0 -1]
+[1  0]
 
 ----------------------------------------------------------
 Task 1.4: create histogram representation for images
@@ -40,8 +63,18 @@ Task 1.4: create histogram representation for images
 
 * Can the created histogram be used to reconstruct the image? What other information would be needed?
 
+No. Only the amount of different pixel values can be read from the histogram, not their position in the image.
+
 * Would your function work with the HSV or CMYK color space?
+
+Not really. HSV and CMYK would be interpreted as RGB, which would make the results not very useful. Also, the black part of CMYK would be lost.
 
 * Explain the difference between an individual color histogram, a combined color histogram and an intensity histogram. What information is displayed in each of these diagrams? What histogram type did we use?
 
+Individual Color: One histogram for each color channel.
+Combined Color: Individual color histograms above each other; used here.
+Intensity: No color but only lightness values; used here when working with greyscale images.
+
 * Explain the concept of histogram bins.
+
+A grouping of multiple values into one single histogram column. One could reduce the 256 values into fewer bins, e.g. 64, with 4 values combined into one bin, but that would mean information loss. More than 256 bins could be used if the color space of the image really had that many colors.
