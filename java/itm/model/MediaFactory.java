@@ -1,12 +1,16 @@
 package itm.model;
 
 /*******************************************************************************
-    This file is part of the ITM course 2014
-    (c) University of Vienna 2009-2014
+ This file is part of the ITM course 2014
+ (c) University of Vienna 2009-2014
  *******************************************************************************/
 
+import itm.audio.AudioMetadataGenerator;
+import itm.audio.AudioThumbGenerator;
 import itm.image.ImageMetadataGenerator;
 import itm.image.ImageThumbnailGenerator;
+import itm.video.VideoMetadataGenerator;
+import itm.video.VideoThumbnailGenerator;
 
 import java.io.File;
 import java.io.IOException;
@@ -127,12 +131,21 @@ public class MediaFactory {
 
 		// step 2.1: create audio thumbnails (with a given length), do not
 		// overwrite if not required
+		AudioThumbGenerator atg = new AudioThumbGenerator(10);
+		atg.batchProcessAudioFiles(audioDir, metadataDir);
 
 		// step 2.3 create audio metadata
+		AudioMetadataGenerator amg = new AudioMetadataGenerator();
+		ret.addAll(amg.batchProcessAudio(audioDir, metadataDir, false));
 
 		// step 3.1: create video thumbnails, do not overwrite if not required
+		//VideoFrameGrabber vtg = new VideoFrameGrabber();
+		VideoThumbnailGenerator vtg = new VideoThumbnailGenerator();
+		vtg.batchProcessVideoFiles(videoDir, metadataDir, false);
 
 		// step 3.2: create video metadata, do not overwrite if not required
+		VideoMetadataGenerator vmg = new VideoMetadataGenerator();
+		ret.addAll( vmg.batchProcessVideoFiles(videoDir, metadataDir, false) );
 
 		return ret;
 	}
@@ -161,14 +174,16 @@ public class MediaFactory {
 				am.readFromFile(f);
 				return am;
 			} else if (name.startsWith("aud_")) {
-				// do something
-				throw new RuntimeException( "loading audio metadata files not yet implemented! see MediaFactory.java!" );
+				AbstractMedia am = new AudioMedia();
+				am.readFromFile(f);
+				return am;
 			} else if (name.startsWith("vid_")) {
-				// do something
-				throw new RuntimeException( "loading video metadata files not yet implemented! see MediaFactory.java!" );
-			} else {
-				throw new IOException("Could not determine media type of metadata file " + name);
-			}
+				AbstractMedia am = new VideoMedia();
+				am.readFromFile(f);
+			} else
+				throw new IOException(
+						"Could not determine media type of metadata file "
+								+ name);
 		}
 		
 		// If passed file is a jpg/gif/png: create a new image object
@@ -176,7 +191,40 @@ public class MediaFactory {
 			return new ImageMedia(f);
 		}
 
-		throw new IOException("Could not determine what object to create from filename extension " + ext);
+		// If passed file is a wav/...: create a new audio object
+		if (ext.equals("wav") || ext.equals("mp3") || ext.equals("ogg"))
+			return new AudioMedia(f);
+
+		// If passed file is a avi/...: create a new video object
+		if (ext.equals("avi") || ext.equals("swf") || ext.equals("asf") || ext.equals("flv") || ext.equals("mp4") )
+			return new VideoMedia(f);
+
+		throw new IOException(
+				"Could not determine what object to create from filename extension "
+						+ ext);
+	}
+
+	/**
+	 * For debugging only.
+	 */
+	public static void main(String[] args) throws Exception {
+
+		// args = new
+		// String[]{"./webapps/itm/media/img","./webapps/itm/media/audio","./webapps/itm/media/md"};
+
+		if (args.length < 4) {
+			System.out
+					.println("usage: java itm.model.MediaFactory <image-directory> <audio-directory> <video-directory> <metadata-directory>");
+			System.exit(1);
+		}
+		File fimg = new File(args[0]);
+		File faud = new File(args[1]);
+		File fvid = new File(args[2]);
+		File fmd = new File(args[3]);
+		MediaFactory.init(fimg, faud, fvid, fmd);
+		ArrayList<AbstractMedia> media = MediaFactory.loadMedia();
+		for (AbstractMedia am : media)
+			System.out.println("media: " + am);
 	}
 
 }
