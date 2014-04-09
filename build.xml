@@ -97,7 +97,7 @@
 	-->
 <target name="ImageMetadataGenerator" depends="compile" description="test the ImageMetadataGenerator: example: ant.bat ImageMetadataGenerator -Dinput=media/img/ -Doutput=test/">
 <!-- set default values for properties / overwrite via commandline! -->
-<property name="input" location="../media/img/" />
+<property name="input" location="media/img/" />
 <property name="output" location="result/" />
 
 <mkdir dir="${output}" />
@@ -116,7 +116,7 @@
 	-->
 <target name="ImageThumbnailGenerator" depends="compile" description="test the ImageThumbnailGenerator: example: ant.bat ImageThumbnailGenerator -Dinput=media/img/ -Doutput=test/">
 <!-- set default values for properties / overwrite via commandline! -->
-<property name="input" location="../media/img/" />
+<property name="input" location="media/img/" />
 <property name="output" location="result/" />
 
 <mkdir dir="${output}" />
@@ -135,7 +135,7 @@
     -->
 <target name="ImageHistogramGenerator" depends="compile" description="test the ImageHistogramGenerator: example: ant.bat ImageHistogramGenerator -Dinput=media/img/ -Doutput=test/ -Dbins=256">
 <!-- set default values for properties / overwrite via commandline! -->
-<property name="input" location="../media/img/" />
+<property name="input" location="media/img/" />
 <property name="output" location="result/" />
 <property name="bins" value="256" />
 
@@ -162,7 +162,7 @@
 -->
 <target name="AudioThumbGenerator" depends="compile" description="test the audio thumbnail generator. Example: ant.bat AudioThumbGenerator -Dinput=media/audio/ -Doutput=test/ -Dlength=10">
 <!-- set default values for properties / overwrite via commandline! -->
-<property name="input" location="../media/audio/" />
+<property name="input" location="media/audio/" />
 <property name="output" location="result/" />
 <property name="length" location="10" />
 
@@ -183,7 +183,7 @@
 -->
 <target name="AudioMetadataGenerator" depends="compile" description="test the audio metadata generator. Example: ant.bat AudioMetadataGenerator -Dinput=media/audio/ -Doutput=test/">
 <!-- set default values for properties / overwrite via commandline! -->
-<property name="input" location="../media/audio/" />
+<property name="input" location="media/audio/" />
 <property name="output" location="result/" />
 
 <mkdir dir="${output}" />
@@ -204,7 +204,7 @@
 -->
 <target name="AudioPlayer" depends="compile" description="play an audio file. Example: ant.bat AudioPlayer -Dinput=media/audio/mySong.mp3">
 <!-- set default values for properties / overwrite via commandline! -->
-<property name="input" location="../media/audio/Amazon.mp3" />
+<property name="input" location="media/audio/Amazon.mp3" />
 
 <java classname="itm.audio.AudioPlayer">
 	<arg value="${input}" />
@@ -222,7 +222,7 @@
 -->
 <target name="VideoFrameGrabber" depends="compile" description="test the video thumbnail generator. Example: ant.bat VideoFrameGrabber -Dinput=media/video/ -Doutput=test/">
 <!-- set default values for properties / overwrite via commandline! -->
-<property name="input" location="../media/video/" />
+<property name="input" location="media/video/" />
 <property name="output" location="result/" />
 
 <java classname="itm.video.VideoFrameGrabber">
@@ -242,7 +242,7 @@
 -->
 <target name="VideoMetadataGenerator" depends="compile" description="test the video metadata generator. Example: ant.bat VideoMetadataGenerator -Dinput=media/video/ -Doutput=test/">
 <!-- set default values for properties / overwrite via commandline! -->
-<property name="input" location="../media/video/" />
+<property name="input" location="media/video/" />
 <property name="output" location="result/" />
 
 <java classname="itm.video.VideoMetadataGenerator">
