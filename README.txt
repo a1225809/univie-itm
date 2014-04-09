@@ -10,7 +10,7 @@
 Installation/Deployment
 
     * download and extract the assignment zip
-    * make sure you have a working JDK 1.5 or higher installed
+    * make sure you have a working JDK 1.5 installed
           o NOTE: since you will develop Java applications, you must install 
                   the Java Development Kit (JDK); the JRE has no compiler!
           o please follow the installation instructions for your OS (see wiki)
@@ -18,7 +18,9 @@ Installation/Deployment
                 and "javac -version" from the commandline
     * call "./ant.sh -p" (Linux/MacOSX/cygwin) or "ant.bat -p" (Windows shell) 
         to get a list of all possible build goals. 
-       
-See the wiki for further information!
+    * call "./ant.sh" to build your sources.
+      
+        
+See the Moodle for further information!
        
 
