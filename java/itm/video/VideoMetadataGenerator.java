@@ -7,25 +7,15 @@ package itm.video;
 
 import itm.model.MediaFactory;
 import itm.model.VideoMedia;
+import itm.util.IOUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
-
-import javax.media.ControllerEvent;
-import javax.media.ControllerListener;
-import javax.media.Manager;
-import javax.media.Processor;
-import javax.media.control.TrackControl;
-import javax.media.format.AudioFormat;
-import javax.media.format.VideoFormat;
-import javax.media.protocol.DataSource;
 
 import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IStream;
 import com.xuggle.xuggler.IStreamCoder;
-import com.xuggle.xuggler.ICodec.Type;
 
 /**
  * This class reads video files, extracts metadata for both the audio and the
@@ -142,15 +132,49 @@ public class VideoMetadataGenerator {
 		// Fill in your code here!
 		// ***************************************************************
 		
+		VideoMedia media = null;
+		IContainer container = null;
 		
 		// create video media object
-		VideoMedia media = (VideoMedia) MediaFactory.createMedia(input);
+		media = (VideoMedia) MediaFactory.createMedia(input);
 
-		// set video and audio stream metadata 
+		// set video and audio stream metadata
+		container = IContainer.make();
+		container.open(input.getAbsolutePath(), IContainer.Type.READ, null);
+
+		for(int i = 0; i < container.getNumStreams(); i++) {
+			IStream stream = container.getStream(i);
+			IStreamCoder coder = stream.getStreamCoder();
+			
+			if(coder.getCodecType().toString().equals("CODEC_TYPE_AUDIO")) {
+				
+				media.setAudioCodec(coder.getCodec().toString());
+				media.setAudioCodecID(coder.getCodecID().toString());
+				media.setAudioChannels(coder.getChannels());
+				media.setAudioSampleRate(coder.getSampleRate());
+				media.setAudioBitRate(coder.getBitRate());
+				
+			} else if(coder.getCodecType().toString().equals("CODEC_TYPE_VIDEO")) {
+				
+				media.setVideoCodec(coder.getCodec().toString());
+				media.setVideoCodecID(coder.getCodecID().toString());
+				media.setVideoFrameRate(coder.getFrameRate().toString());
+				media.setVideoLength(container.getDuration());
+				media.setVideoHeight(coder.getHeight());
+				media.setVideoWidth(coder.getWidth());
+			}
+			
+			coder.close();
+		}
 		
 		// add video tag
+		media.addTag("video");
 
 		// write metadata
+		IOUtil.writeFile(media.serializeObject(), outputFile);
+		
+		// close container
+		container.close();
 		
 		return media;
 	}
@@ -161,7 +185,7 @@ public class VideoMetadataGenerator {
 	 */
 	public static void main(String[] args) throws Exception {
 
-		// args = new String[] {"./media/video", "./media/md"};
+		args = new String[] {"./media/video/panda.avi", "./media/md"};
 
 		if (args.length < 2) {
 			System.out.println("usage: java itm.video.VideoMetadataGenerator <input-video> <output-directory>");

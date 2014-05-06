@@ -1,0 +1,22 @@
+type: video
+file: ./media/video/panda.avi
+name: panda.avi
+size: 2473984 bytes (2473kB)
+tags: video,
+
+Video-Metadata: 
+
+videoCodec: com.xuggle.xuggler.ICodec@1815743088[type=CODEC_TYPE_VIDEO;id=CODEC_ID_CINEPAK;name=cinepak;]
+videoCodecID: CODEC_ID_CINEPAK
+videoFrameRate: 25/1
+videoLength [sec]: 4
+videoHeight [pixel]: 288
+videoWidth: [pixel]352
+
+Audio-Metadata
+
+audioCodec: com.xuggle.xuggler.ICodec@1815743376[type=CODEC_TYPE_AUDIO;id=CODEC_ID_MP3;name=mp3;]
+audioCodecID: CODEC_ID_MP3
+audioChannels: 2
+audioSampleRate [Hz]: 44100000
+audioBitRate [kb/s]: 192
