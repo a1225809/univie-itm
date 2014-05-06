@@ -148,8 +148,8 @@ public class AudioThumbGenerator {
 	 */
 	public static void main(String[] args) throws Exception {
 
-		args = new String[] { "./media/audio/Epoq-Lepidoptera.ogg",
-				"./test", "30" };
+		args = new String[] { "./test/FireFire.mp3.wav",
+				"./test", "10" };
 
 		if (args.length < 3) {
 			System.out
