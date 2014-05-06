@@ -128,16 +128,18 @@ public class AudioThumbGenerator {
 		// Fill in your code here!
 		// ***************************************************************
 
+		AudioInputStream audio = null;
+		AudioInputStream newAudio = null;
+
 		// load the input audio file
-		AudioInputStream audio = AudioUtil.openDecodedAudioInputStream(input,
+		audio = AudioUtil.openDecodedAudioInputStream(input,
 				AudioFormat.Encoding.PCM_SIGNED);
 
 		// cut the audio data in the stream to a given length
-		AudioInputStream writeAudio = AudioUtil.cutAudio(audio,
-				this.thumbNailLength);
+		newAudio = AudioUtil.cutAudio(audio, this.thumbNailLength);
 
 		// save the acoustic thumbnail as WAV file
-		AudioSystem.write(writeAudio, AudioFileFormat.Type.WAVE, outputFile);
+		AudioSystem.write(newAudio, AudioFileFormat.Type.WAVE, outputFile);
 
 		return outputFile;
 	}
@@ -148,8 +150,7 @@ public class AudioThumbGenerator {
 	 */
 	public static void main(String[] args) throws Exception {
 
-		args = new String[] { "./test/FireFire.mp3.wav",
-				"./test", "10" };
+		args = new String[] { "./test/FireFire.mp3.wav", "./test", "10" };
 
 		if (args.length < 3) {
 			System.out

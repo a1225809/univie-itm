@@ -101,12 +101,16 @@ public class AudioPlayer {
 		// Fill in your code here!
 		// ***************************************************************
 
+		AudioFormat format = null;
+		DataLine.Info info = null;
+		SourceDataLine sdl = null;
+
 		// get audio format
-		AudioFormat format = audio.getFormat();
+		format = audio.getFormat();
 
 		// get a source data line
-		DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
-		SourceDataLine sdl = (SourceDataLine) AudioSystem.getLine(info);
+		info = new DataLine.Info(SourceDataLine.class, format);
+		sdl = (SourceDataLine) AudioSystem.getLine(info);
 
 		// read samples from audio and write them to the data line
 		sdl.open(format);

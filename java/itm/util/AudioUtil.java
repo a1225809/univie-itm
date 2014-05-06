@@ -26,16 +26,20 @@ public class AudioUtil {
 		// Fill in your code here!
 		// ***************************************************************
 
+		AudioInputStream din = null;
+		AudioFormat format = null;
+		AudioFormat decoded_format = null;
+
 		// open audio stream
-		AudioInputStream din = AudioSystem.getAudioInputStream(input);
+		din = AudioSystem.getAudioInputStream(input);
 
 		// get format
-		AudioFormat format = din.getFormat();
+		format = din.getFormat();
 
 		// get decoded format
-		AudioFormat decoded_format = new AudioFormat(encoding,
-				format.getSampleRate(), 16, format.getChannels(),
-				format.getChannels() * 2, format.getSampleRate(), false);
+		decoded_format = new AudioFormat(encoding, format.getSampleRate(), 16,
+				format.getChannels(), format.getChannels() * 2,
+				format.getSampleRate(), false);
 
 		// get decoded audio input stream
 		return din = AudioSystem.getAudioInputStream(decoded_format, din);
@@ -52,8 +56,11 @@ public class AudioUtil {
 	 * @return Cut AudioInputStream
 	 */
 	public static AudioInputStream cutAudio(AudioInputStream audio, int length) {
-		AudioFormat format = audio.getFormat();
-		long frames_to_write = length * (int) format.getFrameRate();
+		AudioFormat format = null;
+		long frames_to_write;
+
+		format = audio.getFormat();
+		frames_to_write = length * (int) format.getFrameRate();
 
 		return new AudioInputStream(audio, format, frames_to_write);
 	}

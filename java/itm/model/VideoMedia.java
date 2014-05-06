@@ -32,7 +32,7 @@ public class VideoMedia extends AbstractMedia {
 	protected int audioChannels;
 	protected int audioSampleRate;
 	protected int audioBitRate;
-	
+
 	/**
 	 * Constructor.
 	 */
@@ -140,7 +140,7 @@ public class VideoMedia extends AbstractMedia {
 	public void setAudioBitRate(int audioBitRate) {
 		this.audioBitRate = audioBitRate / 1000;
 	}
-	
+
 	/* (de-)serialization */
 
 	/**
@@ -160,28 +160,28 @@ public class VideoMedia extends AbstractMedia {
 		// ***************************************************************
 		// Fill in your code here!
 		// ***************************************************************
-		
+
 		out.println();
 		out.println("Video-Metadata: ");
 		out.println();
-		
+
 		out.println("videoCodec: " + this.videoCodec);
 		out.println("videoCodecID: " + this.videoCodecID);
 		out.println("videoFrameRate: " + this.videoFrameRate);
 		out.println("videoLength [sec]: " + this.videoLength);
 		out.println("videoHeight [pixel]: " + this.videoHeight);
 		out.println("videoWidth: [pixel]" + this.videoWidth);
-		
+
 		out.println();
 		out.println("Audio-Metadata");
 		out.println();
-		
+
 		out.println("audioCodec: " + this.audioCodec);
 		out.println("audioCodecID: " + this.audioCodecID);
 		out.println("audioChannels: " + this.audioChannels);
 		out.println("audioSampleRate [Hz]: " + this.audioSampleRate);
 		out.println("audioBitRate [kb/s]: " + this.audioBitRate);
-		
+
 		return data.getBuffer();
 	}
 
@@ -198,10 +198,51 @@ public class VideoMedia extends AbstractMedia {
 		while ((line = br.readLine()) != null) {
 
 			/* video fields */
-			
+
 			// ***************************************************************
 			// Fill in your code here!
 			// ***************************************************************
+
+			if (line.startsWith("videoCodec: ")) {
+				this.setVideoCodec(line.substring("videoCodec: ".length()));
+
+			} else if (line.startsWith("videoCodecID: ")) {
+				this.setVideoCodecID(line.substring("videoCodecID: ".length()));
+
+			} else if (line.startsWith("videoFrameRate: ")) {
+				this.setVideoFrameRate(line.substring("videoFramRate: "
+						.length()));
+
+			} else if (line.startsWith("videoLength [sec]: ")) {
+				this.setVideoLength(Integer.parseInt(line
+						.substring("videoLength [sec]: ".length())) * 1000);
+
+			} else if (line.startsWith("videoHeight [pixel]: ")) {
+				this.setVideoHeight(Integer.parseInt(line
+						.substring("videoHeight [pixel]: ".length())));
+
+			} else if (line.startsWith("videoWidth [pixel]: ")) {
+				this.setVideoWidth(Integer.parseInt(line
+						.substring("videoWidth [pixel]: ".length())));
+
+			} else if (line.startsWith("audioCodec: ")) {
+				this.setAudioCodec(line.substring("audioCodec: ".length()));
+
+			} else if (line.startsWith("audioCodecID: ")) {
+				this.setAudioCodecID(line.substring("audioCodecID: ".length()));
+
+			} else if (line.startsWith("audioChannels: ")) {
+				this.setAudioChannels(Integer.parseInt(line
+						.substring("audioChannels: ".length())));
+
+			} else if (line.startsWith("audioSampleRate [Hz]: ")) {
+				this.setAudioSampleRate(Integer.parseInt(line
+						.substring("audioSampleRate [Hz]: ".length())) / 1000);
+
+			} else if (line.startsWith("audioBitRate [kb/s]: ")) {
+				this.setAudioBitRate(Integer.parseInt(line
+						.substring("audioBitRate [kb/s]: ".length())) * 1000);
+			}
 		}
 	}
 
