@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.xuggle.xuggler.ICodec;
 import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IStream;
 import com.xuggle.xuggler.IStreamCoder;
@@ -156,13 +157,10 @@ public class VideoMetadataGenerator {
 		container.open(input.getAbsolutePath(), IContainer.Type.READ, null);
 
 		for (int i = 0; i < container.getNumStreams(); i++) {
-			IStream stream = null;
-			IStreamCoder coder = null;
+			IStream stream = container.getStream(i);
+			IStreamCoder coder = stream.getStreamCoder();
 
-			stream = container.getStream(i);
-			coder = stream.getStreamCoder();
-
-			if (coder.getCodecType().toString().equals("CODEC_TYPE_AUDIO")) {
+			if (coder.getCodecType() == ICodec.Type.CODEC_TYPE_AUDIO) {
 
 				media.setAudioCodec(coder.getCodec().toString());
 				media.setAudioCodecID(coder.getCodecID().toString());
@@ -170,8 +168,7 @@ public class VideoMetadataGenerator {
 				media.setAudioSampleRate(coder.getSampleRate());
 				media.setAudioBitRate(coder.getBitRate());
 
-			} else if (coder.getCodecType().toString()
-					.equals("CODEC_TYPE_VIDEO")) {
+			} else if (coder.getCodecType() == ICodec.Type.CODEC_TYPE_VIDEO) {
 
 				media.setVideoCodec(coder.getCodec().toString());
 				media.setVideoCodecID(coder.getCodecID().toString());
