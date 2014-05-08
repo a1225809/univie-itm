@@ -5,8 +5,6 @@ package itm.video;
  (c) University of Vienna 2009-2014
  *******************************************************************************/
 
-import itm.util.VideoUtil;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +12,6 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
-import com.xuggle.xuggler.Global;
 import com.xuggle.xuggler.ICodec;
 import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IPacket;
@@ -127,15 +124,11 @@ public class VideoFrameGrabber {
 		IStreamCoder coder = null;
 		IPacket packet = null;
 		IVideoResampler resampler = null;
-		int streamID = 0;
-		double video_duration = 0;
+		int streamIndex = 0;
 
 		// Open Container
 		container = IContainer.make();
 		container.open(input.getAbsolutePath(), IContainer.Type.READ, null);
-
-		// Get the duration of the video
-		video_duration = container.getDuration();
 
 		// Get Video-Coder
 		for (int i = 0; i < container.getNumStreams(); i++) {
@@ -144,7 +137,7 @@ public class VideoFrameGrabber {
 
 			if (tmp_coder.getCodecType() == ICodec.Type.CODEC_TYPE_VIDEO) {
 				coder = tmp_coder;
-				streamID = stream.getId();
+				streamIndex = stream.getIndex();
 				break;
 			}
 		}
@@ -152,12 +145,10 @@ public class VideoFrameGrabber {
 		// Open Coder
 		coder.open();
 
-		System.out.println(coder.getPixelType());
-
-		// Convert to right ColorSpace
-		if (coder.getPixelType() != IPixelFormat.Type.BGR24) {
+		// Create Resampler
+		if (coder.getPixelType() != IPixelFormat.Type.YUV420P) {
 			resampler = IVideoResampler.make(coder.getWidth(),
-					coder.getHeight(), IPixelFormat.Type.BGR24,
+					coder.getHeight(), IPixelFormat.Type.YUV420P,
 					coder.getWidth(), coder.getHeight(), coder.getPixelType());
 		}
 
@@ -166,20 +157,26 @@ public class VideoFrameGrabber {
 
 		while (container.readNextPacket(packet) >= 0) {
 
-			if (packet.getStreamIndex() == streamID) {
+			if (packet.getStreamIndex() == streamIndex) {
 
 				IVideoPicture picture = IVideoPicture.make(
 						coder.getPixelType(), coder.getWidth(),
 						coder.getHeight());
 				coder.decodeVideo(picture, packet, 0);
 
-				if (picture.getPts() >= video_duration / 2) {
-					BufferedImage img = Utils.videoPictureToImage(picture);
+				if (picture.getPts() >= container.getDuration() / 2) {
+					BufferedImage img = null;
 
 					if (resampler != null) {
-						
-					}
+						IVideoPicture newPicture = IVideoPicture.make(
+								resampler.getOutputPixelFormat(),
+								picture.getWidth(), picture.getHeight());
+						resampler.resample(newPicture, picture);
+						img = Utils.videoPictureToImage(newPicture);
 
+					} else {
+						img = Utils.videoPictureToImage(picture);
+					}
 					ImageIO.write(img, "jpg", outputFile);
 
 					break;
@@ -196,7 +193,7 @@ public class VideoFrameGrabber {
 	 */
 	public static void main(String[] args) throws Exception {
 
-		args = new String[] { "./media/video/panda.avi", "./test" };
+		args = new String[] { "./media/video/space.flv", "./test" };
 
 		if (args.length < 2) {
 			System.out
