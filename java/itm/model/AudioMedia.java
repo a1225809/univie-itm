@@ -90,8 +90,12 @@ public class AudioMedia extends AbstractMedia {
 		return date;
 	}
 
-	public void setDate(String date) throws ParseException {
-		this.date = new SimpleDateFormat("yyyy").parse(date);
+	public void setDate(String date) {
+		try {
+			this.date = new SimpleDateFormat("yyyy").parse(date);
+		} catch (ParseException e) {
+			// do nothing
+		}
 	}
 
 	public String getComment() {
@@ -179,7 +183,6 @@ public class AudioMedia extends AbstractMedia {
 		out.println("encoding: " + this.encoding);
 		out.println("author: " + this.author);
 		out.println("title: " + this.title);
-		out.println("date: " + new SimpleDateFormat("yyyy").format(this.date));
 		out.println("comment: " + this.comment);
 		out.println("album: " + this.album);
 		out.println("track: " + this.track);
@@ -188,7 +191,13 @@ public class AudioMedia extends AbstractMedia {
 		out.println("frequency: " + this.frequency);
 		out.println("bitrate: " + this.bitrate);
 		out.println("channels: " + this.channels);
-
+		
+		try {
+			out.println("date: " + new SimpleDateFormat("yyyy").format(this.date));
+		} catch (Exception e) {
+			// do nothing
+		}
+		
 		return data.getBuffer();
 	}
 
@@ -221,12 +230,7 @@ public class AudioMedia extends AbstractMedia {
 				this.setTitle(line.substring("title: ".length()));
 
 			} else if (line.startsWith("date: ")) {
-				try {
-					this.setDate(line.substring("date: ".length()));
-
-				} catch (ParseException e) {
-					System.err.println("Error when parsing date from file");
-				}
+				this.setDate(line.substring("date: ".length()));
 
 			} else if (line.startsWith("comment: ")) {
 				this.setComment(line.substring("comment: ".length()));
