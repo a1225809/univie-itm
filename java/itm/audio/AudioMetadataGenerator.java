@@ -146,27 +146,17 @@ public class AudioMetadataGenerator {
 				return media;
 			}
 
-		// ***************************************************************
-		// Fill in your code here!
-		// ***************************************************************
-
-		Map<String, Object> map = null;
-		AudioMedia media = null;
-		AudioInputStream audio = null;
-		AudioFormat format = null;
-
 		// create an audio metadata object
-		media = (AudioMedia) MediaFactory.createMedia(input);
+		AudioMedia media = (AudioMedia) MediaFactory.createMedia(input);
 
 		// load the input audio file, do not decode
-		audio = AudioSystem.getAudioInputStream(input);
+		AudioInputStream audio = AudioSystem.getAudioInputStream(input);
 
 		// read AudioFormat properties
-		format = audio.getFormat();
-		map = format.properties();
+		AudioFormat format = audio.getFormat();
+		Map<String, Object> formatProps = format.properties();
 
-		for (Map.Entry<String, Object> entry : map.entrySet()) {
-
+		for (Map.Entry<String, Object> entry : formatProps.entrySet()) {
 			if (entry.getKey().equalsIgnoreCase("bitrate"))
 				media.setBitrate((int) entry.getValue());
 		}
@@ -176,12 +166,11 @@ public class AudioMetadataGenerator {
 		media.setChannels(format.getChannels());
 
 		// read file-type specific properties
-		map = AudioSystem.getAudioFileFormat(input).properties();
+		Map<String, Object> fileProps = AudioSystem.getAudioFileFormat(input).properties();
 
 		// you might have to distinguish what properties are available for what
 		// audio format
-		for (Map.Entry<String, Object> entry : map.entrySet()) {
-
+		for (Map.Entry<String, Object> entry : fileProps.entrySet()) {
 			if (entry.getKey().equalsIgnoreCase("duration"))
 				media.setDuration((long) entry.getValue());
 
@@ -200,18 +189,23 @@ public class AudioMetadataGenerator {
 			else if (entry.getKey().equalsIgnoreCase("album"))
 				media.setAlbum((String) entry.getValue());
 
-			else if (entry.getKey().equalsIgnoreCase("track"))
+			else if (entry.getKey().equalsIgnoreCase("track") || entry.getKey().equalsIgnoreCase("mp3.id3tag.track") || entry.getKey().equalsIgnoreCase("ogg.comment.track"))
 				media.setTrack((String) entry.getValue());
 
-			else if (entry.getKey().equalsIgnoreCase("composer"))
+			else if (entry.getKey().equalsIgnoreCase("composer") || entry.getKey().equalsIgnoreCase("mp3.id3tag.composer") || entry.getKey().equalsIgnoreCase("ogg.comment.composer"))
 				media.setComposer((String) entry.getValue());
 
-			else if (entry.getKey().equalsIgnoreCase("genre"))
+			else if (entry.getKey().equalsIgnoreCase("genre") || entry.getKey().equalsIgnoreCase("mp3.id3tag.genre") || entry.getKey().equalsIgnoreCase("ogg.comment.genre"))
 				media.setGenre((String) entry.getValue());
 		}
 
 		// add a "audio" tag
 		media.addTag("audio");
+		
+		// add a tag corresponding to the filename extension of the file to the media
+		String filename = input.getName();
+		String ext = filename.substring(filename.lastIndexOf(".")+1).toLowerCase();
+		media.addTag(ext);
 
 		// close the audio and write the md file.
 		audio.close();
@@ -225,10 +219,6 @@ public class AudioMetadataGenerator {
 	 * information if required.
 	 */
 	public static void main(String[] args) throws Exception {
-
-		args = new String[] { "./media/audio/Epoq-Lepidoptera.ogg",
-				"./media/md" };
-
 		if (args.length < 2) {
 			System.out
 					.println("usage: java itm.image.AudioMetadataGenerator <input-image> <output-directory>");
