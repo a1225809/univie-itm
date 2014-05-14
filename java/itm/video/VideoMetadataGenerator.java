@@ -198,9 +198,6 @@ public class VideoMetadataGenerator {
 	 * information if required.
 	 */
 	public static void main(String[] args) throws Exception {
-
-		args = new String[] { "./media/video/panda.avi", "./media/md" };
-
 		if (args.length < 2) {
 			System.out
 					.println("usage: java itm.video.VideoMetadataGenerator <input-video> <output-directory>");
