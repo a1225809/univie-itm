@@ -164,7 +164,7 @@
 <!-- set default values for properties / overwrite via commandline! -->
 <property name="input" location="media/audio/" />
 <property name="output" location="result/" />
-<property name="length" location="10" />
+<property name="length" value="10" />
 
 <mkdir dir="${output}" />
 <java classname="itm.audio.AudioThumbGenerator">
