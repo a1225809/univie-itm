@@ -179,7 +179,7 @@ public class AudioMedia extends AbstractMedia {
 		out.println("encoding: " + this.encoding);
 		out.println("author: " + this.author);
 		out.println("title: " + this.title);
-		out.println("date: " + this.date.toString());
+		out.println("date: " + new SimpleDateFormat("yyyy").format(this.date));
 		out.println("comment: " + this.comment);
 		out.println("album: " + this.album);
 		out.println("track: " + this.track);
@@ -244,16 +244,13 @@ public class AudioMedia extends AbstractMedia {
 				this.setGenre(line.substring("genre: ".length()));
 
 			} else if (line.startsWith("frequency: ")) {
-				this.setFrequency(Integer.parseInt(line.substring("genre: "
-						.length())));
+				this.setFrequency(Integer.parseInt(line.substring("frequency: ".length())));
 
 			} else if (line.startsWith("bitrate: ")) {
-				this.setBitrate(Integer.parseInt(line.substring("genre: "
-						.length())));
+				this.setBitrate(Integer.parseInt(line.substring("bitrate: ".length())));
 
 			} else if (line.startsWith("channels: ")) {
-				this.setChannels(Integer.parseInt(line.substring("genre: "
-						.length())));
+				this.setChannels(Integer.parseInt(line.substring("channels: ".length())));
 			}
 		}
 	}
