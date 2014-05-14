@@ -149,9 +149,6 @@ public class AudioThumbGenerator {
 	 * information if required.
 	 */
 	public static void main(String[] args) throws Exception {
-
-		args = new String[] { "./test/FireFire.mp3.wav", "./test", "10" };
-
 		if (args.length < 3) {
 			System.out
 					.println("usage: java itm.audio.AudioThumbGenerator <input-audioFile> <output-directory> <length>");
@@ -159,6 +156,7 @@ public class AudioThumbGenerator {
 					.println("usage: java itm.audio.AudioThumbGenerator <input-directory> <output-directory> <length>");
 			System.exit(1);
 		}
+		
 		File fi = new File(args[0]);
 		File fo = new File(args[1]);
 		Integer length = new Integer(args[2]);
