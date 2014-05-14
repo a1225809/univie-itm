@@ -8,6 +8,8 @@ package itm.audio;
 import itm.util.AudioUtil;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -123,23 +125,31 @@ public class AudioThumbGenerator {
 			throw new IOException(output + " is not a directory!");
 
 		File outputFile = new File(output, input.getName() + ".wav");
-
-		// ***************************************************************
-		// Fill in your code here!
-		// ***************************************************************
-
-		AudioInputStream audio = null;
-		AudioInputStream newAudio = null;
-
+		
 		// load the input audio file
-		audio = AudioUtil.openDecodedAudioInputStream(input,
-				AudioFormat.Encoding.PCM_SIGNED);
-
+		AudioInputStream audio = AudioUtil.openDecodedAudioInputStream(input, AudioFormat.Encoding.PCM_SIGNED);
+		
 		// cut the audio data in the stream to a given length
-		newAudio = AudioUtil.cutAudio(audio, this.thumbNailLength);
-
+		AudioInputStream newAudio = AudioUtil.cutAudio(audio, this.thumbNailLength);
+		
+		// write audio to temp file: workaround for ogg files
+		File tempFile = new File(output, input.getName() + ".tmp");
+        FileOutputStream tempFOS = new FileOutputStream(tempFile); 
+        
+        byte[] buffer = new byte[4096];
+        int n; // number of bytes read
+        
+        while ((n = newAudio.read(buffer)) != -1) {
+            tempFOS.write(buffer, 0, n);
+        }
+        
+        tempFOS.close();
+        
+        AudioInputStream tempAIS = new AudioInputStream(new FileInputStream(tempFile), newAudio.getFormat(), newAudio.getFrameLength());
+        tempFile.delete();
+		
 		// save the acoustic thumbnail as WAV file
-		AudioSystem.write(newAudio, AudioFileFormat.Type.WAVE, outputFile);
+		AudioSystem.write(tempAIS, AudioFileFormat.Type.WAVE, outputFile);
 
 		return outputFile;
 	}
