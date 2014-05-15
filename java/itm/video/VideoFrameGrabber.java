@@ -192,9 +192,6 @@ public class VideoFrameGrabber {
 	 * information if required.
 	 */
 	public static void main(String[] args) throws Exception {
-
-		args = new String[] { "./media/video/space.flv", "./test" };
-
 		if (args.length < 2) {
 			System.out
 					.println("usage: java itm.video.VideoFrameGrabber <input-videoFile> <output-directory>");
