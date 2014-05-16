@@ -42,4 +42,8 @@ Das Umwandeln von einem Video Format in ein anderes
 
 9. Briefly describe and compare the video codecs we used in this assignment.
 
-???
+Intel Indeo 3
+Microsoft MPEG-4 4.3
+Cinepak Video
+Theora
+

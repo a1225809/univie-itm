@@ -5,6 +5,8 @@ package itm.video;
  (c) University of Vienna 2009-2014
  *******************************************************************************/
 
+import itm.util.VideoUtil;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -120,15 +122,11 @@ public class VideoFrameGrabber {
 		// Fill in your code here!
 		// ***************************************************************
 
-		IContainer container = null;
+		IContainer container = VideoUtil.openVideoContainer(input);
 		IStreamCoder coder = null;
 		IPacket packet = null;
 		IVideoResampler resampler = null;
 		int streamIndex = 0;
-
-		// Open Container
-		container = IContainer.make();
-		container.open(input.getAbsolutePath(), IContainer.Type.READ, null);
 
 		// Get Video-Coder
 		for (int i = 0; i < container.getNumStreams(); i++) {
@@ -143,14 +141,10 @@ public class VideoFrameGrabber {
 		}
 
 		// Open Coder
-		coder.open();
+		VideoUtil.openCoder(coder);
 
 		// Create Resampler
-		if (coder.getPixelType() != IPixelFormat.Type.YUV420P) {
-			resampler = IVideoResampler.make(coder.getWidth(),
-					coder.getHeight(), IPixelFormat.Type.YUV420P,
-					coder.getWidth(), coder.getHeight(), coder.getPixelType());
-		}
+		resampler = VideoUtil.getResampler(coder, IPixelFormat.Type.BGR24);
 
 		// Create new Packet
 		packet = IPacket.make();
@@ -159,9 +153,7 @@ public class VideoFrameGrabber {
 
 			if (packet.getStreamIndex() == streamIndex) {
 
-				IVideoPicture picture = IVideoPicture.make(
-						coder.getPixelType(), coder.getWidth(),
-						coder.getHeight());
+				IVideoPicture picture = VideoUtil.getPicture(coder);
 				coder.decodeVideo(picture, packet, 0);
 
 				if (picture.getPts() >= container.getDuration() / 2) {
