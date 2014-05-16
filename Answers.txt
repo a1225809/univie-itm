@@ -1,0 +1,45 @@
+1. Describe the physical appearance of sound and how is it converted to digital sampled audio. Explain how sampling works and the meaning of the terms amplitude, sampling frequency, and quantization.
+
+Der Schall breitet sich als Welle in einem Medium (Luft) aus.
+Beim Sampling wird die kontinuierliche, analoge Welle mit einer gewissen Frequenz abgetastet und so in ein zeitdiskretes Signal umgewandelt.
+Amplitude: Maximale Auslenkung der Schwingung von der Mitte
+Sampling Frequenz = Abtastrate (in Hertz)
+Quantisierung: Reduzierung des Signals auf einen begrenzten (weil digitalen) Wertebereich, gewissermaßen Rundung
+
+2. Why do WAV files require more storage space than MP3 files?
+
+WAV ist ein umkomprimiertes Format, das die PCM Rohdaten enthält; MP3 ist stark (verlustbehaftet) komprimiert.
+
+3. In the Java Sound API: what is a sample, what is a frame?
+
+Ein Frame umfasst die Daten aller Kanäle zu einem Zeitpunkt, ein Sample nur die eines Kanals.
+
+4. How is volume (i.e., how loud a sound is) reflected in analog and digital audio signals? Why does it make sense to perform non-uniform quantization?
+
+Je größer die Amplitude, desto lauter.
+Das menschliche Gehör ist für manche Bereiche des Spektrums empfindlicher als für andere, deshalb macht es Sinn, dort genauer zu quantisieren.
+
+5. What is Pulse Code Modulation (PCM)?
+
+Verfahren, um ein analoges Signal in ein digitales zu übersetzen.
+a) Sampling mit konstanter Abtastrate
+b) Quantisierung
+c) Codierung, im einfachsten Fall die absoluten Werte in Binärdarstellung
+
+6. What is (de-)multiplexing? What is a codec?
+
+Multiplexing: Mehrere Signale für die Übertragung zu bündeln bzw. wieder zu entbündeln (Demultiplexing)
+Codec: COder + DECoder. Ein bestimmtes Verfahren Daten/ Signale digital zu kodieren/dekodieren.
+
+7. In what color space are images usually represented in video files? What color space is usually used for computer images?
+
+Video: YCbCr
+Bild: RGB
+
+8. What is video transcoding?
+
+Das Umwandeln von einem Video Format in ein anderes
+
+9. Briefly describe and compare the video codecs we used in this assignment.
+
+???
